@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart DMS Enterprise - AI-Powered Document Management</title>
+    
+    <!-- Optimized Libraries -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        /* ========== DESIGN SYSTEM ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-50: #eef2ff;
+            --primary-100: #e0e7ff;
+            --primary-200: #c7d2fe;
+            --primary-300: #a5b4fc;
+            --primary-400: #818cf8;
+            --primary-500: #6366f1;
+            --primary-600: #4f46e5;
+            --primary-700: #4338ca;
+            
+            --success-50: #f0fdf4;
+            --success-500: #22c55e;
+            --warning-500: #f59e0b;
+            --error-500: #ef4444;
+            --info-500: #3b82f6;
+            
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.4);
+            --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========== LAYOUT ========== */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6366f1, #4338ca);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-section {
+            padding: var(--space-4) 0;
+        }
+
+        .nav-section-title {
+            padding: 0 var(--space-6);
+            margin-bottom: var(--space-2);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: var(--space-3) var(--space-6);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+            color: white;
+        }
+
+        .nav-item.active {
+            border-left: 3px solid white;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: rgba(99, 102, 241, 0.5);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: var(--space-6);
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: var(--space-4) var(--space-6);
+            margin-bottom: var(--space-6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .page-title p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Search */
+        .search-container {
+            position: relative;
+            width: 350px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: var(--space-4);
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: white;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            margin-top: var(--space-2);
+            border: 1px solid var(--glass-border);
+            display: none;
+            z-index: 1000;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+        }
+
+        .search-result-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* User Menu */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .notification-btn {
+            position: relative;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 12px;
+            min-width: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: rgba(255,255,255,0.1);
+            border-radius: 40px;
+            padding: var(--space-2) var(--space-3);
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #6366f1, #4338ca);
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-name {
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: var(--space-6);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .stat-icon.green { background: linear-gradient(135deg, #22c55e, #15803d); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f59e0b, #b45309); }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+        .stat-trend {
+            padding: 0.2rem 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-info p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: var(--space-8);
+            margin-bottom: var(--space-6);
+        }
+
+        .upload-box {
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 16px;
+            padding: var(--space-8);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .upload-box:hover, .upload-box.dragover {
+            border-color: white;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: var(--space-4);
+        }
+
+        .upload-box h3 {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: var(--space-2);
+        }
+
+        .upload-box p {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: var(--space-4);
+        }
+
+        .upload-progress {
+            margin-top: var(--space-6);
+            display: none;
+        }
+
+        .upload-progress.active {
+            display: block;
+        }
+
+        .progress-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            margin-bottom: var(--space-2);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            width: 0;
+            transition: width var(--transition-base);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-6);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .card-body {
+            padding: var(--space-6);
+        }
+
+        .view-all {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .view-all:hover {
+            color: white;
+        }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: var(--space-3);
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .table td {
+            padding: var(--space-3);
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .table tr {
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .table tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 0.2rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            background: rgba(99,102,241,0.2);
+            color: #a5b4fc;
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+        }
+
+        .status-badge.completed {
+            background: rgba(34,197,94,0.2);
+            color: #86efac;
+        }
+
+        .status-badge.processing {
+            background: rgba(245,158,11,0.2);
+            color: #fcd34d;
+        }
+
+        .status-badge.failed {
+            background: rgba(239,68,68,0.2);
+            color: #fca5a5;
+        }
+
+        /* Alerts */
+        .alert-item {
+            padding: var(--space-4);
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin-bottom: var(--space-3);
+            border-left: 4px solid;
+            cursor: pointer;
+        }
+
+        .alert-item.critical { border-left-color: #ef4444; }
+        .alert-item.high { border-left-color: #f59e0b; }
+        .alert-item.medium { border-left-color: #3b82f6; }
+        .alert-item.low { border-left-color: #22c55e; }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-2);
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: white;
+        }
+
+        .alert-time {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .alert-message {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+        }
+
+        .quick-action-btn {
+            padding: var(--space-4);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            color: white;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(99,102,241,0.3);
+            transform: scale(1.05);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Documents Grid */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .document-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: var(--space-6);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .document-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .document-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6366f1, #4338ca);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: var(--space-4);
+        }
+
+        .document-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: var(--space-2);
+        }
+
+        .document-meta {
+            display: flex;
+            gap: var(--space-4);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: var(--space-3);
+        }
+
+        .document-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-bottom: var(--space-3);
+        }
+
+        .tag {
+            padding: 0.2rem 0.6rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .extracted-preview {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: var(--space-3);
+            font-size: 0.85rem;
+            margin: var(--space-3) 0;
+        }
+
+        .extracted-preview p {
+            margin: 0.2rem 0;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .document-actions {
+            display: flex;
+            gap: var(--space-2);
+            justify-content: flex-end;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .document-card:hover .document-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 32px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: rgba(99,102,241,0.5);
+        }
+
+        /* Workflows */
+        .workflows-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .workflow-stats {
+            display: flex;
+            gap: var(--space-4);
+        }
+
+        .workflow-stat {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: var(--space-2) var(--space-4);
+        }
+
+        .workflow-stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .workflow-stat-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .workflow-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+        }
+
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-3);
+        }
+
+        .workflow-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .workflow-badge {
+            padding: 0.2rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+        }
+
+        .workflow-badge.active {
+            background: rgba(34,197,94,0.2);
+            color: #86efac;
+        }
+
+        .workflow-trigger {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            background: rgba(99,102,241,0.2);
+            border-radius: 16px;
+            font-size: 0.8rem;
+            color: #a5b4fc;
+            margin-bottom: var(--space-3);
+        }
+
+        .workflow-actions-list {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+            margin: var(--space-3) 0;
+        }
+
+        .workflow-action-tag {
+            padding: 0.2rem 0.6rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .workflow-metrics {
+            display: flex;
+            gap: var(--space-4);
+            margin-top: var(--space-3);
+            padding-top: var(--space-3);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .workflow-metric {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Reports */
+        .reports-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .report-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: var(--space-6);
+        }
+
+        .report-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6366f1, #4338ca);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: var(--space-3);
+        }
+
+        .report-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: var(--space-1);
+        }
+
+        .report-date {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: var(--space-3);
+        }
+
+        .report-meta {
+            display: flex;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .report-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Settings */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .settings-group {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: var(--space-6);
+        }
+
+        .settings-group-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item-label {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-switch.active {
+            background: rgba(99,102,241,0.5);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            top: 2px;
+            left: 2px;
+            transition: left var(--transition-base);
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        /* Range Slider */
+        .range-slider {
+            width: 150px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .range-slider-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #4338ca);
+            border-radius: 2px;
+        }
+
+        /* Form Controls */
+        .form-control {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: var(--space-2) var(--space-3);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: white;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4338ca);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .btn-icon {
+            padding: var(--space-2);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .modal-footer {
+            padding: var(--space-6);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+        }
+
+        /* Notifications */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .notification {
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            transform: translateX(120%);
+            transition: transform 0.3s;
+            max-width: 350px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification.success .notification-icon {
+            background: rgba(34,197,94,0.2);
+            color: #86efac;
+        }
+
+        .notification.error .notification-icon {
+            background: rgba(239,68,68,0.2);
+            color: #fca5a5;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: white;
+        }
+
+        .notification-message {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2);
+            margin-top: var(--space-6);
+        }
+
+        .pagination-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 36px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .pagination-btn.active {
+            background: rgba(99,102,241,0.5);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-10);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: rgba(255,255,255,0.2);
+            margin-bottom: var(--space-4);
+        }
+
+        .empty-title {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: var(--space-2);
+        }
+
+        .empty-description {
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: var(--space-10);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--space-4);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .sidebar .logo-text,
+            .sidebar .nav-item span,
+            .sidebar .nav-section-title {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: var(--space-4);
+            }
+            
+            .search-container {
+                width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .workflow-stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <span class="logo-text">SmartDMS</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">MAIN</div>
+                <div class="nav-item active" onclick="switchPage('dashboard')">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('documents')">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documents</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('workflows')">
+                    <i class="fas fa-cog"></i>
+                    <span>Workflows</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('reports')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">ADMIN</div>
+                <div class="nav-item" onclick="switchPage('settings')">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="page-title">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageSubtitle">Welcome back! Here's your document overview.</p>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="globalSearch" placeholder="Search documents..." onkeyup="handleSearch(this.value)">
+                        </div>
+                        <div class="search-results" id="searchResults"></div>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <button class="notification-btn" onclick="toggleNotifications()">
+                            <i class="far fa-bell"></i>
+                            <span class="notification-badge" id="notificationBadge">3</span>
+                        </button>
+                        
+                        <div class="user-profile" onclick="toggleUserMenu()">
+                            <div class="user-avatar">JD</div>
+                            <span class="user-name">John Doe</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Content -->
+            <div id="contentArea"></div>
+        </main>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="documentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Document Details</h2>
+                <button class="modal-close" onclick="closeModal('documentModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="documentModalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('documentModal')">Close</button>
+                <button class="btn btn-primary" onclick="downloadDocument()">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="workflowModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Create Workflow</h2>
+                <button class="modal-close" onclick="closeModal('workflowModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Workflow Name</label>
+                    <input type="text" class="form-control" id="workflowName" placeholder="e.g., Invoice Alert">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Trigger</label>
+                    <select class="form-control" id="triggerType">
+                        <option value="document_type">Document Type</option>
+                        <option value="field_value">Field Value</option>
+                        <option value="schedule">Schedule</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('workflowModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveWorkflow()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Generate Report</h2>
+                <button class="modal-close" onclick="closeModal('reportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Report Type</label>
+                    <select class="form-control" id="reportType">
+                        <option value="summary">Summary Report</option>
+                        <option value="detailed">Detailed Analysis</option>
+                        <option value="financial">Financial Report</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Format</label>
+                    <select class="form-control" id="reportFormat">
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('reportModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="generateReport()">Generate</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const mockData = {
+            documents: [
+                { id: 1, name: 'Invoice_ACME_2024-001.pdf', type: 'invoice', status: 'completed', uploaded: '2024-01-15T10:30:00', size: 2450000, pages: 3, confidence: 98, tags: ['acme', 'urgent'], extracted: { vendor: 'ACME Corp', amount: 12500, date: '2024-01-15' } },
+                { id: 2, name: 'Contract_Agreement.pdf', type: 'contract', status: 'processing', uploaded: '2024-01-14T14:20:00', size: 3800000, pages: 15, confidence: 85, tags: ['legal'], extracted: { parties: 'Tech Solutions Inc', value: 150000 } },
+                { id: 3, name: 'Receipt_Amazon.pdf', type: 'receipt', status: 'completed', uploaded: '2024-01-14T09:15:00', size: 890000, pages: 1, confidence: 99, tags: ['amazon'], extracted: { merchant: 'Amazon', total: 114.45 } },
+                { id: 4, name: 'Resume_Sarah.pdf', type: 'resume', status: 'completed', uploaded: '2024-01-13T16:45:00', size: 1200000, pages: 2, confidence: 92, tags: ['candidate'], extracted: { name: 'Sarah Johnson', email: 'sarah@email.com' } }
+            ],
+            workflows: [
+                { id: 1, name: 'High-Value Invoice Alert', description: 'Alert for invoices over $10,000', trigger: 'amount > 10000', actions: ['email', 'slack'], status: 'active', executions: 156, successRate: 98, lastRun: '2024-01-15T08:30:00' },
+                { id: 2, name: 'Contract Expiry Monitor', description: '30-day contract expiry notice', trigger: 'expiry <= 30', actions: ['email', 'task'], status: 'active', executions: 43, successRate: 100, lastRun: '2024-01-15T09:00:00' }
+            ],
+            alerts: [
+                { id: 1, severity: 'critical', title: 'High-Value Invoice', message: 'Invoice for $14,000 requires approval', time: '5 min ago', read: false },
+                { id: 2, severity: 'high', title: 'Contract Expiring', message: 'Contract expires in 30 days', time: '1 hour ago', read: false },
+                { id: 3, severity: 'medium', title: 'Processing Complete', message: '3 documents processed', time: '2 hours ago', read: false }
+            ],
+            stats: { totalDocuments: 12543, processedToday: 342, pendingDocuments: 23, activeAlerts: 3, storageUsed: 45.2, avgConfidence: 94.5 }
+        };
+
+        // State
+        let currentPage = 'dashboard';
+        let searchTimeout;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPage('dashboard');
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    document.getElementById('globalSearch').focus();
+                }
+            });
+        });
+
+        // Page Switching
+        function switchPage(page) {
+            currentPage = page;
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const titles = {
+                dashboard: { title: 'Dashboard', subtitle: 'Real-time document overview' },
+                documents: { title: 'Documents', subtitle: 'Manage your documents' },
+                workflows: { title: 'Workflows', subtitle: 'Automate document processing' },
+                reports: { title: 'Reports', subtitle: 'Generate insights' },
+                settings: { title: 'Settings', subtitle: 'Configure system preferences' }
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[page].title;
+            document.getElementById('pageSubtitle').textContent = titles[page].subtitle;
+            
+            renderPage(page);
+        }
+
+        // Render Pages
+        function renderPage(page) {
+            const contentArea = document.getElementById('contentArea');
+            
+            const pages = {
+                dashboard: renderDashboard,
+                documents: renderDocuments,
+                workflows: renderWorkflows,
+                reports: renderReports,
+                settings: renderSettings
+            };
+            
+            contentArea.innerHTML = pages[page] ? pages[page]() : renderDashboard();
+            
+            if (page === 'dashboard') {
+                setTimeout(initializeCharts, 100);
+            }
+        }
+
+        function renderDashboard() {
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="switchPage('documents')">
+                        <div class="stat-header">
+                            <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
+                            <span class="stat-trend">+12.5%</span>
+                        </div>
+                        <div class="stat-info">
+                            <h3>${formatNumber(mockData.stats.totalDocuments)}</h3>
+                            <p>Total Documents</p>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="switchPage('documents')">
+                        <div class="stat-header">
+                            <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                            <span class="stat-trend">+8.2%</span>
+                        </div>
+                        <div class="stat-info">
+                            <h3>${formatNumber(mockData.stats.processedToday)}</h3>
+                            <p>Processed Today</p>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="switchPage('documents')">
+                        <div class="stat-header">
+                            <div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
+                            <span class="stat-trend">-3.1%</span>
+                        </div>
+                        <div class="stat-info">
+                            <h3>${mockData.stats.pendingDocuments}</h3>
+                            <p>Pending</p>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="toggleNotifications()">
+                        <div class="stat-header">
+                            <div class="stat-icon purple"><i class="fas fa-exclamation-triangle"></i></div>
+                            <span class="stat-trend">Active</span>
+                        </div>
+                        <div class="stat-info">
+                            <h3>${mockData.stats.activeAlerts}</h3>
+                            <p>Alerts</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-area">
+                    <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="triggerFileUpload()">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Upload Documents</h3>
+                        <p>Drag & drop or click to upload (PDF, JPG, PNG)</p>
+                        <input type="file" id="fileInput" multiple style="display:none" onchange="handleFileSelect(event)">
+                        <button class="btn btn-primary">Select Files</button>
+                    </div>
+                    <div id="uploadProgress" class="upload-progress"></div>
+                </div>
+
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-history"></i> Recent Documents</h2>
+                            <span class="view-all" onclick="switchPage('documents')">View All →</span>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr><th>Document</th><th>Type</th><th>Status</th><th>Date</th><th></th></tr>
+                                </thead>
+                                <tbody>
+                                    ${mockData.documents.slice(0, 3).map(doc => `
+                                        <tr onclick="viewDocument(${doc.id})">
+                                            <td><i class="fas fa-${getFileIcon(doc.name)}" style="margin-right:8px"></i>${doc.name}</td>
+                                            <td><span class="badge">${doc.type}</span></td>
+                                            <td><span class="status-badge ${doc.status}">${doc.status}</span></td>
+                                            <td>${formatTimeAgo(doc.uploaded)}</td>
+                                            <td><i class="fas fa-chevron-right"></i></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-bell"></i> Alerts</h2>
+                            <span class="view-all" onclick="markAllAlertsRead()">Mark all read</span>
+                        </div>
+                        <div class="card-body">
+                            ${mockData.alerts.map(alert => `
+                                <div class="alert-item ${alert.severity}" onclick="viewAlert(${alert.id})">
+                                    <div class="alert-header">
+                                        <span class="alert-title">${alert.title}</span>
+                                        <span class="alert-time">${alert.time}</span>
+                                    </div>
+                                    <div class="alert-message">${alert.message}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-chart-pie"></i> Categories</h2>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoryChart" style="height:200px"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-actions">
+                                <button class="quick-action-btn" onclick="triggerFileUpload()"><i class="fas fa-upload"></i><span>Upload</span></button>
+                                <button class="quick-action-btn" onclick="openModal('workflowModal')"><i class="fas fa-cog"></i><span>Workflow</span></button>
+                                <button class="quick-action-btn" onclick="openModal('reportModal')"><i class="fas fa-file-pdf"></i><span>Report</span></button>
+                                <button class="quick-action-btn" onclick="exportData()"><i class="fas fa-download"></i><span>Export</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDocuments() {
+            return `
+                <div style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap">
+                    <div style="flex:1; min-width:250px">
+                        <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Search documents..."></div>
+                    </div>
+                    <select class="form-control" style="width:150px"><option>All Types</option></select>
+                    <select class="form-control" style="width:150px"><option>All Status</option></select>
+                    <button class="btn btn-primary" onclick="triggerFileUpload()"><i class="fas fa-upload"></i> Upload</button>
+                </div>
+
+                <div class="documents-grid">
+                    ${mockData.documents.map(doc => `
+                        <div class="document-card" onclick="viewDocument(${doc.id})">
+                            <div class="document-icon"><i class="fas fa-${getFileIcon(doc.name)}"></i></div>
+                            <div class="document-title">${doc.name}</div>
+                            <div class="document-meta">
+                                <span><i class="far fa-calendar"></i> ${formatDate(doc.uploaded)}</span>
+                                <span><i class="far fa-file"></i> ${formatFileSize(doc.size)}</span>
+                            </div>
+                            <div class="document-tags">
+                                <span class="tag">${doc.type}</span>
+                                <span class="status-badge ${doc.status}">${doc.status}</span>
+                            </div>
+                            <div class="extracted-preview">
+                                ${Object.entries(doc.extracted).map(([k,v]) => `<p><i class="fas fa-${getIconForField(k)}"></i> ${v}</p>`).join('')}
+                            </div>
+                            <div class="document-actions">
+                                <button class="action-btn" onclick="event.stopPropagation();viewDocument(${doc.id})"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" onclick="event.stopPropagation();downloadDocument()"><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="pagination">
+                    <button class="pagination-btn" disabled>←</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">→</button>
+                </div>
+            `;
+        }
+
+        function renderWorkflows() {
+            return `
+                <div class="workflows-header">
+                    <div class="workflow-stats">
+                        <div class="workflow-stat"><div class="workflow-stat-value">${mockData.workflows.length}</div><div class="workflow-stat-label">Active</div></div>
+                        <div class="workflow-stat"><div class="workflow-stat-value">${mockData.workflows.reduce((s,w)=>s+w.executions,0)}</div><div class="workflow-stat-label">Executions</div></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('workflowModal')"><i class="fas fa-plus"></i> New Workflow</button>
+                </div>
+
+                ${mockData.workflows.map(wf => `
+                    <div class="workflow-card">
+                        <div class="workflow-header">
+                            <span class="workflow-name">${wf.name}</span>
+                            <span class="workflow-badge ${wf.status}">${wf.status}</span>
+                        </div>
+                        <p style="color:rgba(255,255,255,0.7)">${wf.description}</p>
+                        <div class="workflow-trigger"><i class="fas fa-bolt"></i> ${wf.trigger}</div>
+                        <div class="workflow-actions-list">
+                            ${wf.actions.map(a => `<span class="workflow-action-tag"><i class="fas fa-${a === 'email' ? 'envelope' : 'slack'}"></i> ${a}</span>`).join('')}
+                        </div>
+                        <div class="workflow-metrics">
+                            <span class="workflow-metric"><i class="fas fa-play-circle"></i> ${wf.executions} runs</span>
+                            <span class="workflow-metric"><i class="fas fa-chart-line"></i> ${wf.successRate}% success</span>
+                            <span class="workflow-metric"><i class="far fa-clock"></i> ${formatTimeAgo(wf.lastRun)}</span>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function renderReports() {
+            return `
+                <div class="reports-header">
+                    <h2 style="color:white">Available Reports</h2>
+                    <button class="btn btn-primary" onclick="openModal('reportModal')"><i class="fas fa-plus"></i> Generate</button>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem">
+                    <div class="report-card">
+                        <div class="report-icon"><i class="fas fa-file-pdf"></i></div>
+                        <div class="report-title">Monthly Summary</div>
+                        <div class="report-date">Generated 2 hours ago</div>
+                        <div class="report-meta">
+                            <span class="report-meta-item"><i class="far fa-file"></i> PDF</span>
+                            <span class="report-meta-item"><i class="fas fa-weight"></i> 2.4 MB</span>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%; margin-top:1rem"><i class="fas fa-download"></i> Download</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSettings() {
+            return `
+                <div class="settings-grid">
+                    <div class="settings-group">
+                        <div class="settings-group-title"><i class="fas fa-user"></i> Profile</div>
+                        <div class="settings-item"><span class="settings-item-label">Name</span><span>John Doe</span></div>
+                        <div class="settings-item"><span class="settings-item-label">Email</span><span>john@smartdms.com</span></div>
+                        <div class="settings-item"><span class="settings-item-label">Role</span><span>Admin</span></div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <div class="settings-group-title"><i class="fas fa-bell"></i> Notifications</div>
+                        <div class="settings-item"><span class="settings-item-label">Email Alerts</span><div class="toggle-switch active"></div></div>
+                        <div class="settings-item"><span class="settings-item-label">Slack</span><div class="toggle-switch active"></div></div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <div class="settings-group-title"><i class="fas fa-database"></i> Storage</div>
+                        <div class="settings-item"><span class="settings-item-label">Used</span><span>${mockData.stats.storageUsed} GB / 100 GB</span></div>
+                        <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px; margin:1rem 0">
+                            <div style="width:${mockData.stats.storageUsed}%; height:100%; background:linear-gradient(90deg,#6366f1,#4338ca); border-radius:2px"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:2rem; display:flex; justify-content:flex-end; gap:1rem">
+                    <button class="btn btn-outline">Cancel</button>
+                    <button class="btn btn-primary">Save Changes</button>
+                </div>
+            `;
+        }
+
+        // Charts
+        function initializeCharts() {
+            const ctx = document.getElementById('categoryChart')?.getContext('2d');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Invoices', 'Contracts', 'Receipts', 'Resumes'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: ['#6366f1', '#22c55e', '#f59e0b', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // Utilities
+        function formatNumber(num) {
+            if (num >= 1000000) return (num/1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num/1000).toFixed(1) + 'K';
+            return num;
+        }
+
+        function formatDate(date) {
+            return moment(date).format('MMM D, YYYY');
+        }
+
+        function formatTimeAgo(date) {
+            return moment(date).fromNow();
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let size = bytes, i = 0;
+            while (size >= 1024 && i < units.length-1) { size /= 1024; i++; }
+            return `${size.toFixed(1)} ${units[i]}`;
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (ext === 'pdf') return 'file-pdf';
+            if (['jpg','jpeg','png'].includes(ext)) return 'file-image';
+            if (['doc','docx'].includes(ext)) return 'file-word';
+            return 'file-alt';
+        }
+
+        function getIconForField(field) {
+            const icons = { vendor: 'building', amount: 'dollar-sign', date: 'calendar', name: 'user', email: 'envelope' };
+            return icons[field] || 'info-circle';
+        }
+
+        // Search
+        function handleSearch(query) {
+            clearTimeout(searchTimeout);
+            if (query.length < 2) {
+                document.getElementById('searchResults').classList.remove('active');
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                const results = mockData.documents.filter(d => 
+                    d.name.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                const html = results.slice(0, 3).map(d => `
+                    <div class="search-result-item" onclick="viewDocument(${d.id})">
+                        <div style="color:white; font-weight:500">${d.name}</div>
+                        <div style="color:rgba(255,255,255,0.5); font-size:0.8rem">${d.type} • ${formatFileSize(d.size)}</div>
+                    </div>
+                `).join('') || '<div class="search-result-item">No results</div>';
+                
+                document.getElementById('searchResults').innerHTML = html;
+                document.getElementById('searchResults').classList.add('active');
+            }, 300);
+        }
+
+        // Upload
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            processFiles(Array.from(e.dataTransfer.files));
+        }
+
+        function triggerFileUpload() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileSelect(e) {
+            processFiles(Array.from(e.target.files));
+        }
+
+        function processFiles(files) {
+            const progress = document.getElementById('uploadProgress');
+            progress.innerHTML = '';
+            progress.classList.add('active');
+            
+            files.forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+                item.innerHTML = `
+                    <div class="progress-header"><span>${file.name}</span><span class="progress-percent">0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                `;
+                progress.appendChild(item);
+                
+                let p = 0;
+                const interval = setInterval(() => {
+                    p += Math.random() * 10;
+                    if (p >= 100) {
+                        p = 100;
+                        clearInterval(interval);
+                        item.querySelector('.progress-percent').textContent = '100%';
+                        item.querySelector('.progress-fill').style.width = '100%';
+                        showNotification('Upload Complete', file.name, 'success');
+                    } else {
+                        item.querySelector('.progress-percent').textContent = `${Math.round(p)}%`;
+                        item.querySelector('.progress-fill').style.width = `${p}%`;
+                    }
+                }, 200);
+            });
+        }
+
+        // Document Functions
+        function viewDocument(id) {
+            const doc = mockData.documents.find(d => d.id === id);
+            if (!doc) return;
+            
+            document.getElementById('documentModalBody').innerHTML = `
+                <h3 style="color:white; margin-bottom:1rem">${doc.name}</h3>
+                <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px; margin-bottom:1rem">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem">
+                        <div><span style="color:rgba(255,255,255,0.5)">Type:</span> ${doc.type}</div>
+                        <div><span style="color:rgba(255,255,255,0.5)">Status:</span> <span class="status-badge ${doc.status}">${doc.status}</span></div>
+                        <div><span style="color:rgba(255,255,255,0.5)">Size:</span> ${formatFileSize(doc.size)}</div>
+                        <div><span style="color:rgba(255,255,255,0.5)">Pages:</span> ${doc.pages}</div>
+                    </div>
+                </div>
+                <h4 style="color:white; margin-bottom:0.5rem">Extracted Data</h4>
+                <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px">
+                    ${Object.entries(doc.extracted).map(([k,v]) => `
+                        <div style="margin-bottom:0.3rem"><span style="color:rgba(255,255,255,0.5)">${k}:</span> ${v}</div>
+                    `).join('')}
+                </div>
+            `;
+            openModal('documentModal');
+        }
+
+        function downloadDocument() {
+            showNotification('Download', 'Document download started', 'success');
+        }
+
+        // Workflow Functions
+        function saveWorkflow() {
+            closeModal('workflowModal');
+            showNotification('Success', 'Workflow created', 'success');
+        }
+
+        // Report Functions
+        function generateReport() {
+            closeModal('reportModal');
+            showNotification('Report', 'Generation started', 'success');
+        }
+
+        // Alert Functions
+        function viewAlert(id) {
+            const alert = mockData.alerts.find(a => a.id === id);
+            if (alert) showNotification('Alert', alert.message, alert.severity);
+        }
+
+        function markAllAlertsRead() {
+            showNotification('Alerts', 'All marked as read', 'success');
+        }
+
+        function toggleNotifications() {
+            showNotification('Notifications', 'No new notifications', 'info');
+        }
+
+        function toggleUserMenu() {
+            showNotification('Profile', 'Profile menu', 'info');
+        }
+
+        function exportData() {
+            showNotification('Export', 'Preparing data...', 'info');
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Notifications
+        function showNotification(title, message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const id = 'notif_' + Date.now();
+            
+            const notif = document.createElement('div');
+            notif.id = id;
+            notif.className = `notification ${type}`;
+            notif.innerHTML = `
+                <div class="notification-icon"><i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i></div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close" onclick="document.getElementById('${id}').remove()">×</button>
+            `;
+            
+            container.appendChild(notif);
+            setTimeout(() => notif.classList.add('show'), 10);
+            setTimeout(() => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 300);
+            }, 4000);
+        }
+
+        // Close search on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                document.getElementById('searchResults').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

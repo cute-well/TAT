@@ -1,0 +1,12 @@
+﻿flask==2.3.3
+flask-cors==4.0.0
+flask-sqlalchemy==3.0.5
+flask-socketio==5.3.4
+Pillow==10.1.0
+werkzeug==2.3.7
+python-dotenv==1.0.0
+pytesseract==0.3.10
+pdf2image==1.16.3
+easyocr==1.7.1
+numpy==1.24.3
+opencv-python==4.8.1.78
