@@ -1,10 +1,26 @@
 import express, { type Request, Response, NextFunction } from "express";
+import { rateLimit } from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
 const app = express();
 const httpServer = createServer(app);
+
+declare module "http" {
+  interface IncomingMessage {
+    rawBody: unknown;
+  }
+}
+
+// Apply rate limiting to all requests
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // max 200 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
 declare module "http" {
   interface IncomingMessage {

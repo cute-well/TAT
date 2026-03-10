@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { rateLimit } from "express-rate-limit";
 import { GoogleGenAI } from "@google/genai";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
@@ -7,6 +8,15 @@ import { z } from "zod";
 
 const genAI = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || process.env.AI_INTEGRATIONS_GEMINI_API_KEY,
+});
+
+// Stricter rate limit for AI processing endpoint (expensive external API calls)
+const processLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // max 10 document submissions per minute
+  message: { message: "Too many processing requests. Please wait before submitting again." },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
@@ -43,7 +53,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json(doc);
   });
 
-  app.post(api.documents.process.path, async (req, res) => {
+  app.post(api.documents.process.path, processLimiter, async (req, res) => {
     try {
       const { title, text } = api.documents.process.input.parse(req.body);
       
